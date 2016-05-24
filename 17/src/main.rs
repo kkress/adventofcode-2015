@@ -47,6 +47,25 @@ fn part1_combos(eggnog: &u32, sizes: &Vec<u32>) {
     println!("There are {} combos", count);
 }
 
+fn part2_min(eggnog: &u32, sizes: &Vec<u32>) {
+    let mut count = 0;
+    let mut found = false;
+    for i in 0..sizes.len() {
+        for c in combination(i as u32, &sizes) {
+            if sum(&c) == *eggnog {
+                found = true;
+                println!("150 == {:?}", c);
+                count += 1;
+            }
+        }
+        // We found the min size, so only look that far
+        if found {
+            break;
+        }
+    }
+    println!("There are {} combos", count);
+}
+
 fn main() {
     let f = File::open("input.txt").unwrap();
     let line_buffer = BufReader::new(&f);
@@ -60,4 +79,5 @@ fn main() {
     }
 
     part1_combos(&eggnog, &containers);
+    part2_min(&eggnog, &containers);
 }
