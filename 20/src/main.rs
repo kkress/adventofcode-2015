@@ -1,7 +1,7 @@
 fn all_factors(num: usize) -> Vec<usize> {
     let ceiling = (num as f64).sqrt() as usize;
     let mut factors = Vec::new();
-    for curr in 1..num+1 {
+    for curr in 1..num + 1 {
         if num % curr == 0 {
             let div = num / curr;
             if div > curr {
@@ -23,20 +23,26 @@ fn all_factors(num: usize) -> Vec<usize> {
 
 #[test]
 fn test_factors() {
-    assert_eq!(all_factors(1), vec!(1));
-    assert_eq!(all_factors(2), vec!(1, 2));
-    assert_eq!(all_factors(3), vec!(1, 3));
-    assert_eq!(all_factors(4), vec!(1, 2, 4));
-    assert_eq!(all_factors(5), vec!(1, 5));
-    assert_eq!(all_factors(6), vec!(1, 2, 3, 6));
-    assert_eq!(all_factors(7), vec!(1, 7));
-    assert_eq!(all_factors(8), vec!(1, 2, 4, 8));
-    assert_eq!(all_factors(9), vec!(1, 3, 9));
-    assert_eq!(all_factors(10), vec!(1, 2, 5, 10));
+    assert_eq!(all_factors(1), vec![1]);
+    assert_eq!(all_factors(2), vec![1, 2]);
+    assert_eq!(all_factors(3), vec![1, 3]);
+    assert_eq!(all_factors(4), vec![1, 2, 4]);
+    assert_eq!(all_factors(5), vec![1, 5]);
+    assert_eq!(all_factors(6), vec![1, 2, 3, 6]);
+    assert_eq!(all_factors(7), vec![1, 7]);
+    assert_eq!(all_factors(8), vec![1, 2, 4, 8]);
+    assert_eq!(all_factors(9), vec![1, 3, 9]);
+    assert_eq!(all_factors(10), vec![1, 2, 5, 10]);
 }
 
-fn count(num: usize) -> usize {
-    all_factors(num).iter().fold(0, |acc, x| acc+x*10)
+fn count_inf(num: usize) -> usize {
+    all_factors(num).iter().fold(0, |acc, x| acc + x * 10)
+}
+
+const MAX_HOUSES: usize = 50;
+
+fn count_max(num: usize) -> usize {
+    all_factors(num).iter().filter(|x| *x * MAX_HOUSES >= num).fold(0, |acc, x| acc + x * 11)
 }
 
 fn main() {
@@ -44,14 +50,22 @@ fn main() {
     let mut i = 1;
     let mut last = 0;
     loop {
-        last = count(i);
-        if i % 10000 == 0 {
-            println!("{} = {}", i, last);
-        }
+        last = count_inf(i);
         if last >= target {
             break;
         }
         i += 1;
     }
-    println!("{} = {}", i, last);
+    println!("Part 1 {} = {}", i, last);
+
+    let mut i = 1;
+    let mut last = 0;
+    loop {
+        last = count_max(i);
+        if last >= target {
+            break;
+        }
+        i += 1;
+    }
+    println!("Part 2 {} = {}", i, last);
 }
