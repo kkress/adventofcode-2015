@@ -3,7 +3,7 @@ use std::cmp::min;
 use std::io::prelude::*;
 use std::io::BufReader;
 use std::fs::File;
-use std::collections::{HashSet};
+use std::collections::HashSet;
 use std::str::FromStr;
 
 extern crate regex;
@@ -36,16 +36,21 @@ impl Replacement {
     // Assuming this replacement was used to create result, what was it before.
     fn produced_from(&self, result: &String) -> Option<(usize, String)> {
         let new = result.replace(&self.val, &self.key);
-        if new == *result { None } else { Some((result.matches(&self.val).count(), new)) }
+        if new == *result {
+            None
+        } else {
+            Some((result.matches(&self.val).count(), new))
+        }
     }
 
     fn replace_first(&self, input: &String) -> Option<String> {
         let len = self.key.len();
-        input.find(&self.key).and_then(|x| Some(input[0..x].to_string() + &self.val + &input[x + len..]))
+        input.find(&self.key)
+            .and_then(|x| Some(input[0..x].to_string() + &self.val + &input[x + len..]))
     }
 
     fn num_result_molecules(&self) -> usize {
-        self.val.chars().filter(|x| x.is_uppercase()).count()       
+        self.val.chars().filter(|x| x.is_uppercase()).count()
     }
 }
 
@@ -93,7 +98,7 @@ fn find_synthesis_with_order(input: &String, replacements: &Vec<Replacement>) ->
         if next == "e" {
             break;
         }
-        curr = next; 
+        curr = next;
     }
     steps
 }
@@ -103,14 +108,14 @@ fn best_step(input: &String, sorted_replacements: &Vec<Replacement>) -> (String,
     for repl in sorted_replacements {
         let replaced = repl.produced_from(curr);
         match replaced {
-            None => {},
+            None => {}
             Some((num, new)) => {
                 let mut steps = Vec::new();
                 for i in 0..num {
                     steps.push(repl.clone());
                 }
                 return (new, steps);
-            },
+            }
         };
     }
     (input.clone(), Vec::new())
@@ -130,7 +135,11 @@ fn test_unique() {
 }
 
 // Totally infeasible.
-fn exhaustive(input: &String, target: &String, repls: &Vec<Replacement>, depth: usize) -> (HashSet<String>, Option<usize>) {
+fn exhaustive(input: &String,
+              target: &String,
+              repls: &Vec<Replacement>,
+              depth: usize)
+              -> (HashSet<String>, Option<usize>) {
     let i_len = input.len();
     let t_len = target.len();
     if i_len > t_len {
@@ -153,7 +162,11 @@ fn exhaustive(input: &String, target: &String, repls: &Vec<Replacement>, depth: 
 }
 
 // Also infeasible
-fn exhaustive_reverse(input: &String, target: &String, repls: &Vec<Replacement>, depth: usize) -> (HashSet<String>, Option<usize>) {
+fn exhaustive_reverse(input: &String,
+                      target: &String,
+                      repls: &Vec<Replacement>,
+                      depth: usize)
+                      -> (HashSet<String>, Option<usize>) {
     let i_len = input.len();
     let t_len = target.len();
     if i_len < t_len {
@@ -188,7 +201,7 @@ fn calculate(input: &String) -> usize {
     let element_count = input.chars().filter(|x| x.is_uppercase()).count();
     let paren_count = input.match_indices("Ar").count() + input.match_indices("Rn").count();
     let comma_count = input.match_indices("Y").count();
-    element_count - paren_count - 2*comma_count - 1
+    element_count - paren_count - 2 * comma_count - 1
 }
 
 fn main() {
@@ -214,11 +227,15 @@ fn main() {
 
     let mut rev_reps = Vec::new();
     for r in &repls {
-        rev_reps.push(Replacement{key: r.val.clone(), val: r.key.clone()});
+        rev_reps.push(Replacement {
+            key: r.val.clone(),
+            val: r.key.clone(),
+        });
     }
 
     let possible = unique_possibilities(&goal, &repls);
     //    let ex = exhaustive_reverse(&goal, &"e".to_string(), &rev_reps, 0);
-   // let chain = find_synthesis(&goal, &repls);
-    println!("{} cheater, I'm not writing a lexer and I got the hard input", calculate(&goal));
+    // let chain = find_synthesis(&goal, &repls);
+    println!("{} cheater, I'm not writing a lexer and I got the hard input",
+             calculate(&goal));
 }
