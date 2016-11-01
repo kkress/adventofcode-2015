@@ -1,0 +1,127 @@
+use std::cmp;
+
+#[derive(Debug)]
+struct Item {
+    name: String,
+    cost: u32,
+    damage: u32,
+    armor: u32,
+}
+
+impl Item {
+    pub fn new(name: &str, cost: u32, damage: u32, armor: u32) -> Item {
+        Item {
+            name: name.to_string(),
+            cost: cost,
+            damage: damage,
+            armor: armor,
+        }
+    }
+}
+
+trait Combatant {
+    fn hp(&self) -> i32;
+    fn attack_power(&self) -> i32;
+    fn defense_power(&self) -> i32;
+    fn take_damage(&mut self, amount: i32);
+
+    fn attack(&self, other: &mut Combatant) {
+        let amount = cmp::min(1, other.defense_power() - self.attack_power());
+        other.take_damage(amount);
+    }
+}
+
+struct Boss {
+    hp: i32,
+    attack: i32,
+    defense: i32,
+}
+
+impl Combatant for Boss {
+    fn hp(&self) -> i32 { self.hp }
+    fn attack_power(&self) -> i32 { self.attack }
+    fn defense_power(&self) -> i32 { self.defense }
+
+    fn take_damage(&mut self, amount: i32)  {
+        self.hp = cmp::max(0, self.hp - amount);
+    }
+}
+
+struct Player {
+    weapon: Item,
+    armor: Item,
+    ring_l: Item,
+    ring_r: Item,
+}
+
+
+fn main() {
+    let weapons = vec!(
+        Item{
+            name: "Dagger".to_string(),
+            cost: 8,
+            damage: 4,
+            armor: 0,
+        },
+        Item {
+            name: "Shortsword".to_string(),
+            cost: 10,
+            damage: 5,
+            armor: 0,
+        },
+        Item {
+            name: "Warhammer".to_string(),
+            cost: 25,
+            damage: 6,
+            armor: 0,
+        },
+        Item {
+            name: "Longsword".to_string(),
+            cost: 40,
+            damage: 7,
+            armor: 0,
+        },
+        Item {
+            name: "Greataxe".to_string(),
+            cost: 74,
+            damage: 8,
+            armor: 0,
+        },
+    );
+    let armor = vec!(
+        Item{
+            name: "Leather".to_string(),
+            cost: 13,
+            damage: 0,
+            armor: 1,
+        },
+        Item {
+            name: "Chainmail".to_string(),
+            cost: 31,
+            damage: 0,
+            armor: 2,
+        },
+        Item {
+            name: "Splintmail".to_string(),
+            cost: 53,
+            damage: 0,
+            armor: 3,
+        },
+        Item {
+            name: "Bandedmail".to_string(),
+            cost: 75,
+            damage: 0,
+            armor: 4,
+        },
+        Item {
+            name: "Platemail".to_string(),
+            cost: 102,
+            damage: 0,
+            armor: 5,
+        },
+        );
+
+    let boss = Boss{hp: 103, attack: 9, defense: 2};
+
+    println!("Hello, world!");
+}
